@@ -29,6 +29,8 @@ function receipt(role: Role, content: string, verdict?: string): Receipt {
 }
 export function begin(owner: string, mode: Mode, task: string, previous?: WorkflowState): WorkflowState {
 	requireText(task, "task");
+	if (mode === "ultragoal" && previous?.mode === "ralplan" && previous.status === "stuck")
+		throw new Error("PLANNING-STUCK cannot dispatch to ultragoal; start a new planning run");
 	if (
 		previous &&
 		!["complete", "stuck"].includes(previous.status) &&
@@ -241,6 +243,7 @@ export function recordGoalRole(state: WorkflowState, role: "executor" | "critic"
 	const goal = next.goals?.find(item => item.status === "active");
 	if (!goal) throw new Error("Start a goal before running an execution role");
 	if (role === "critic" && !goal.executor) throw new Error("Executor receipt required before Critic");
+	if (role === "executor") delete goal.critic;
 	goal[role] = receipt(role, content);
 	next.revision++;
 	return next;
@@ -257,12 +260,7 @@ export function recordResearchReview(state: WorkflowState, content: string): Wor
 }
 
 export function canExecute(state: WorkflowState | undefined): boolean {
-	return (
-		!state ||
-		state.status === "complete" ||
-		state.status === "stuck" ||
-		(state.mode === "ultragoal" && state.status === "active")
-	);
+	return !state || (state.mode === "ultragoal" && state.status === "active");
 }
 export function canHandoff(plan: WorkflowState | undefined): boolean {
 	return (

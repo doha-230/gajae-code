@@ -52,6 +52,9 @@ test("ralplan stops after five failed review passes", () => {
 	assert.equal(state.status, "stuck");
 	assert.equal(state.plan?.pass, 5);
 	assert.equal(canHandoff(state), false);
+	assert.equal(canExecute(state), false);
+	assert.throws(() => begin("session-1", "ultragoal", "Build feature", state), /PLANNING-STUCK/);
+	assert.equal(begin("session-1", "ralplan", "Replan feature", state).mode, "ralplan");
 });
 
 test("ultragoal needs executor and matching passing critic receipt", () => {
@@ -75,11 +78,23 @@ test("ultragoal needs executor and matching passing critic receipt", () => {
 		/receipts/,
 	);
 	state = recordGoalRole(state, "critic", "PASS: edge case verified");
+	state = recordGoalRole(state, "executor", "Reworked implementation");
+	assert.throws(
+		() =>
+			transition(state, {
+				op: "finish_goal",
+				id: "g1",
+				evidence: "test passed",
+				critique: "PASS: edge case verified",
+			}),
+		/receipts/,
+	);
+	state = recordGoalRole(state, "critic", "PASS: reworked implementation verified");
 	state = transition(state, {
 		op: "finish_goal",
 		id: "g1",
 		evidence: "test passed",
-		critique: "PASS: edge case verified",
+		critique: "PASS: reworked implementation verified",
 	});
 	assert.equal(state.status, "complete");
 });
@@ -106,6 +121,7 @@ test("research verdict requires evidence and state survives disk round trip", as
 			conclusion: "Likely yes",
 			caveats: ["One source"],
 		});
+		assert.equal(canExecute(state), false);
 		await saveState(cwd, state, "verdict");
 		assert.deepEqual(await loadState(cwd, state.owner), state);
 		const ledger = await readFile(path.join(path.dirname(statePath(cwd, state.owner)), "ledger.jsonl"), "utf8");
