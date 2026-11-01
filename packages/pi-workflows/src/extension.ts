@@ -287,7 +287,7 @@ export default function gjcPiWorkflows(pi: ExtensionAPI): void {
 				state.mode === "ultragoal" ? state.goals?.find(goal => goal.status === "active") : undefined;
 			if (state.mode === "ultragoal" && !activeGoal) throw new Error("Start a goal first");
 			const assignment = `${state.task}\n\nWorkflow: ${state.mode}; run ${state.id}; revision ${state.revision}.\n${state.approvedPlan ? `Approved plan (${state.approvedPlan.hash}):\n${state.approvedPlan.content}` : ""}\n${state.plan ? `Current planner draft:\n${state.plan.draft?.content ?? "none"}\nArchitect review:\n${state.plan.architect?.content ?? "none"}\nCritic review:\n${state.plan.critic?.content ?? "none"}` : ""}\n${activeGoal ? `Active goal ${activeGoal.id}: ${activeGoal.description}\nExecutor evidence: ${activeGoal.executor?.content ?? "none"}` : ""}\n\nSpecific assignment:\n${params.task}`;
-			const output = await runRole(params.role, assignment, ctx, signal);
+			const output = await runRole(params.role, assignment, pi, ctx, signal);
 			const fresh = await loadState(ctx.cwd, owner);
 			if (!fresh || fresh.id !== state.id || fresh.revision !== state.revision)
 				throw new Error("Workflow changed while role ran; result not recorded");

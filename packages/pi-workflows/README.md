@@ -1,6 +1,6 @@
 # GJC workflows for Pi
 
-This local Pi package adds the four GJC role agents (`executor`, `architect`, `planner`, `critic`) and four workflow skills (`deep-interview`, `ralplan`, `ultragoal`, `autoresearch`) to an existing Pi Coding Agent installation. It is an extension and skill package, not a separate executable. The role sessions use the model selected in Pi, including a local OpenAI-compatible model.
+This local Pi package adds the four GJC role agents (`executor`, `architect`, `planner`, `critic`) and four workflow skills (`deep-interview`, `ralplan`, `ultragoal`, `autoresearch`) to an existing Pi Coding Agent installation. It is an extension and skill package, not a separate executable. Each role runs through the currently installed Pi CLI in an isolated, restricted process using the model selected in Pi, including a local OpenAI-compatible model.
 
 ## Install into an existing Pi
 
@@ -27,7 +27,7 @@ pi install .\packages\pi-workflows
 pi
 ```
 
-The same package works on Linux and Windows. The extension uses Node file APIs and Pi's built-in tools; it does not require Bun or the GJC compiled binary at runtime.
+The same package works on Linux and Windows with a Pi release that supports the host platform. It loads with both `@mariozechner/pi-coding-agent` 0.73.1 and its successor `@earendil-works/pi-coding-agent` 1.4.0. The extension uses Node file APIs and Pi's built-in tools; it does not require Bun or the GJC compiled binary at runtime. The role runner uses the active Pi CLI entry point; `GJC_PI_CLI` can override it when embedding Pi through an SDK host.
 
 ## Local model
 

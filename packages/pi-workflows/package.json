@@ -10,8 +10,10 @@
     "skills": ["./skills"]
   },
   "peerDependencies": {
-    "@earendil-works/pi-coding-agent": "*",
     "typebox": "*"
+  },
+  "devDependencies": {
+    "@earendil-works/pi-coding-agent": "1.4.0"
   },
   "scripts": {
     "check": "tsc --noEmit -p tsconfig.json",

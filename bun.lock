@@ -157,8 +157,10 @@
     "packages/pi-workflows": {
       "name": "@gajae-code/pi-workflows",
       "version": "0.1.0",
+      "devDependencies": {
+        "@earendil-works/pi-coding-agent": "1.4.0",
+      },
       "peerDependencies": {
-        "@earendil-works/pi-coding-agent": "*",
         "typebox": "*",
       },
     },
