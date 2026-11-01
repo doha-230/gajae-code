@@ -1,0 +1,20 @@
+{
+  "name": "@gajae-code/pi-workflows",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "GJC role agents and workflow skills for an existing Pi installation",
+  "keywords": ["pi-package"],
+  "pi": {
+    "extensions": ["./src/extension.ts"],
+    "skills": ["./skills"]
+  },
+  "peerDependencies": {
+    "@earendil-works/pi-coding-agent": "*",
+    "typebox": "*"
+  },
+  "scripts": {
+    "check": "tsc --noEmit -p tsconfig.json",
+    "test": "node --experimental-strip-types --test test/*.test.ts"
+  }
+}
