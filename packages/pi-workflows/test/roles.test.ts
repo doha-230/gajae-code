@@ -20,4 +20,11 @@ test("Pi role process inherits selected local model and restricts planning tools
 	assert.ok(call.args.includes("read,grep,find,ls"));
 	assert.ok(call.args.includes("--no-extensions"));
 	assert.ok(!call.args.includes("edit"));
+	assert.equal(await runRole("executor", "Implement feature", pi, ctx), "Plan ready");
+	assert.ok(call);
+	assert.ok(
+		call.args.includes(
+			process.platform === "win32" ? "read,grep,find,ls,powershell,edit,write" : "read,grep,find,ls,bash,edit,write",
+		),
+	);
 });

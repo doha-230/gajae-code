@@ -3,7 +3,7 @@ import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-a
 import type { Role } from "./state.ts";
 
 const allowed: Record<Role, string[]> = {
-	executor: ["read", "grep", "find", "ls", "bash", "edit", "write"],
+	executor: ["read", "grep", "find", "ls", process.platform === "win32" ? "powershell" : "bash", "edit", "write"],
 	planner: ["read", "grep", "find", "ls"],
 	architect: ["read", "grep", "find", "ls"],
 	critic: ["read", "grep", "find", "ls"],
