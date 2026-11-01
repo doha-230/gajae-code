@@ -2,12 +2,13 @@ import * as fs from "node:fs/promises";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import type { Role } from "./state.ts";
 
-const allowed: Record<Role, string[]> = {
-	executor: ["read", "grep", "find", "ls", process.platform === "win32" ? "powershell" : "bash", "edit", "write"],
-	planner: ["read", "grep", "find", "ls"],
-	architect: ["read", "grep", "find", "ls"],
-	critic: ["read", "grep", "find", "ls"],
-};
+const readOnlyTools = ["read", "grep", "find", "ls"];
+
+export function roleTools(role: Role, platform: NodeJS.Platform = process.platform): string[] {
+	return role === "executor"
+		? [...readOnlyTools, platform === "win32" ? "powershell" : "bash", "edit", "write"]
+		: readOnlyTools;
+}
 
 function piInvocation(): { command: string; prefix: string[] } {
 	const override = process.env.GJC_PI_CLI;
@@ -38,7 +39,7 @@ export async function runRole(
 		"--no-extensions",
 		"--no-skills",
 		"--tools",
-		allowed[role].join(","),
+		roleTools(role).join(","),
 		"--model",
 		`${ctx.model.provider}/${ctx.model.id}`,
 		"--thinking",

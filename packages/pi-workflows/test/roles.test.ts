@@ -1,7 +1,13 @@
 import { strict as assert } from "node:assert";
 import { test } from "node:test";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
-import { runRole } from "../src/roles.ts";
+import { roleTools, runRole } from "../src/roles.ts";
+
+test("Executor selects the host shell while review roles stay read-only", () => {
+	assert.deepEqual(roleTools("executor", "linux"), ["read", "grep", "find", "ls", "bash", "edit", "write"]);
+	assert.deepEqual(roleTools("executor", "win32"), ["read", "grep", "find", "ls", "powershell", "edit", "write"]);
+	assert.deepEqual(roleTools("critic", "win32"), ["read", "grep", "find", "ls"]);
+});
 
 test("Pi role process inherits selected local model and restricts planning tools", async () => {
 	let call: { command: string; args: string[]; cwd?: string } | undefined;
